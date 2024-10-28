@@ -12,7 +12,7 @@ jobs:
     runs-on: ubuntu-22.04
     steps:
       - name: Checkout repository
-        uses: actions/checkout@v2.5.0
+        uses: actions/checkout@v3  # Mettez à jour à v3
 
       - name: Set up JDK 17
         uses: actions/setup-java@v3
@@ -28,7 +28,7 @@ jobs:
     runs-on: ubuntu-22.04
     steps:
       - name: Checkout code
-        uses: actions/checkout@v2.5.0
+        uses: actions/checkout@v3  # Mettez à jour à v3
 
       - name: Login to DockerHub
         run: docker login -u ${{ secrets.DOCKERHUB_USERNAME }} -p ${{ secrets.DOCKERHUB_TOKEN }}
@@ -43,13 +43,13 @@ jobs:
       - name: Build image and push database
         uses: docker/build-push-action@v3
         with:
-          context: ./database  
+          context: ./database
           tags: ${{ secrets.DOCKERHUB_USERNAME }}/tp-devops-database:latest
           push: ${{ github.ref == 'refs/heads/main' }}
 
       - name: Build image and push httpd
         uses: docker/build-push-action@v3
         with:
-          context: ./httpd  # Assurez-vous que le chemin est correct
-          tags: ${{ secrets.DOCKERHUB_USERNAME }}/tp-devops-httpd:latest
+          context: ./http-server  # Assurez-vous que ce chemin est correct
+          tags: ${{ secrets.DOCKERHUB_USERNAME }}/tp-devops-http-server:latest
           push: ${{ github.ref == 'refs/heads/main' }}
