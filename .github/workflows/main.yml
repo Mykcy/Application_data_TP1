@@ -1,4 +1,4 @@
-name: CI devops 2024
+name: CI/CD devops 2024
 on:
   push:
     branches:
@@ -16,7 +16,38 @@ jobs:
         uses: actions/setup-java@v3
         with:
           java-version: '17'
-          distribution: 'corretto' 
+          distribution: 'corretto'
 
       - name: Build and test with Maven
         run: mvn clean verify --file ./simple-api/pom.xml
+
+  build-and-push-docker-image:
+    needs: test-backend  # This job will run only if `test-backend` job passes
+    runs-on: ubuntu-22.04
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v3
+
+      - name: Login to DockerHub
+        run: docker login -u ${{ secrets.DOCKERHUB_USERNAME }} -p ${{ secrets.DOCKERHUB_TOKEN }}
+
+      - name: Build and push backend image
+        uses: docker/build-push-action@v3
+        with:
+          context: ./simple-api  # Path to Dockerfile and source code
+          tags: ${{ secrets.DOCKERHUB_USERNAME }}/tp-devops-simple-api:latest
+          push: ${{ github.ref == 'refs/heads/main' }}  # Only push on the main branch
+
+      - name: Build and push database image
+        uses: docker/build-push-action@v3
+        with:
+          context: ./database  # Update with the actual path to the database Dockerfile
+          tags: ${{ secrets.DOCKERHUB_USERNAME }}/tp-devops-database:latest
+          push: ${{ github.ref == 'refs/heads/main' }}
+
+      - name: Build and push httpd image
+        uses: docker/build-push-action@v3
+        with:
+          context: ./httpd  # Update with the actual path to the httpd Dockerfile
+          tags: ${{ secrets.DOCKERHUB_USERNAME }}/tp-devops-httpd:latest
+          push: ${{ github.ref == 'refs/heads/main' }}
