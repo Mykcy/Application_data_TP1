@@ -1,0 +1,45 @@
+name: Build and Push Docker Image
+
+on:
+  workflow_run:
+    workflows: ["Test Backend"]  # Assurez-vous que le nom correspond exactement au workflow précédent
+    types:
+      - completed
+
+jobs:
+  build-and-push-docker-image:
+    if: ${{ github.event.workflow_run.conclusion == 'success' }}  # Exécute ce job seulement si le précédent a réussi
+    runs-on: ubuntu-22.04
+
+    steps:
+      # Étape pour vérifier le code source
+      - name: Checkout code
+        uses: actions/checkout@v2.5.0
+
+      # Étape pour se connecter à Docker Hub
+      - name: Login to DockerHub
+        run: echo "${{ secrets.DOCKERHUB_TOKEN }}" | docker login -u "${{ secrets.DOCKERHUB_USERNAME }}" --password-stdin
+
+      # Étape pour construire et pousser l'image du backend
+      - name: Build image and push backend
+        uses: docker/build-push-action@v3
+        with:
+          context: ./simple-api  # Chemin vers votre Dockerfile pour le backend
+          tags: ${{ secrets.DOCKERHUB_USERNAME }}/tp-devops-simple-api:latest
+          push: true  # Pousse l'image, car cela est conditionné à la branche ci-dessous
+
+      # Étape pour construire et pousser l'image de la base de données
+      - name: Build image and push database
+        uses: docker/build-push-action@v3
+        with:
+          context: ./database  # Chemin vers votre Dockerfile pour la base de données
+          tags: ${{ secrets.DOCKERHUB_USERNAME }}/tp-devops-database:latest
+          push: true
+
+      # Étape pour construire et pousser l'image httpd
+      - name: Build image and push httpd
+        uses: docker/build-push-action@v3
+        with:
+          context: ./http-server  # Chemin vers votre Dockerfile pour httpd
+          tags: ${{ secrets.DOCKERHUB_USERNAME }}/tp-devops-httpd:latest
+          push: true
