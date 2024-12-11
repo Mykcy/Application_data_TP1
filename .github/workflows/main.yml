@@ -3,8 +3,12 @@ on:
   #to begin you want to launch this job in main and develop
   push:
     branches:
-      -main
+      - main
+      - develop
   pull_request:
+    branches: 
+      - main 
+      - develop
 
 jobs:
   test-backend: 
