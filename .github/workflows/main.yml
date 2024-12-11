@@ -35,7 +35,7 @@ jobs:
       - name: Run tests with Maven
         run: mvn test --file simple-api/pom.xml
       - name: Run tests Sonar
-        run: mvn -B verify sonar:sonar -Dsonar.projectKey=Mykcy_Application_data_TP1 -Dsonar.organization=glory-chicate -Dsonar.host.url=https://sonarcloud.io  -Dsonar.login=${{ secrets.SONAR_TOKEN }}  --file ./simple-api/pom.xml
+        run: mvn -B verify sonar:sonar -Dsonar.projectKey=Mykcy_Application_data_TP1 -Dsonar.organization=mykcy -Dsonar.host.url=https://sonarcloud.io  -Dsonar.login=${{ secrets.SONAR_TOKEN }}  --file ./simple-api/pom.xml
 
 
   build-and-push-docker-image:
