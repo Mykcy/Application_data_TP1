@@ -26,6 +26,11 @@ jobs:
     - name: Install required collections
       run: |
         ansible-galaxy collection install community.general
+    
+    - name: Set up SSH 
+      uses: webfactory/ssh-agent@v0.5.3  
+      with: 
+        ssh-private-key: ${{ secrets.SSH_PRIVATE_KEY }}
 
     - name: Run Ansible Playbook
       env:
