@@ -1,0 +1,26 @@
+# database/tasks/main.yml
+
+# Pull the latest Docker image for the database
+---
+#- hosts: all
+#  gather_facts: true
+# become: true
+# tasks:
+
+   - name: Pull Docker image
+     docker_image:
+       name: glory971/tp-devops-database:latest
+       source: pull
+     vars:
+       ansible_python_interpreter: /opt/docker_venv/bin/python3
+
+# Run Docker container named 'myPostgres' using the pulled image within the 'app-network'
+   - name: Run Docker container in the Docker network
+     docker_container:
+       name: myPostgres
+       image: glory971/tp-devops-database:latest
+       state: started
+       networks:
+         - name: app-network
+     vars:
+       ansible_python_interpreter: /opt/docker_venv/bin/python3

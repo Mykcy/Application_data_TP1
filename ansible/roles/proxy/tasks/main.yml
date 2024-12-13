@@ -1,0 +1,25 @@
+# proxy/tasks/main.yml
+
+# Pull the latest Docker image for the proxy server
+---
+#- hosts: all
+# gather_facts: true
+# become: true
+# tasks:
+   - name: Pull Docker image
+     docker_image:
+       name: glory971/tp-devops-httpd:latest
+       source: pull
+     vars:
+       ansible_python_interpreter: /opt/docker_venv/bin/python3
+   - name: Run Docker container in the Docker network
+     docker_container:
+       name: myHttpdServer
+       image: glory971/tp-devops-httpd:latest
+       state: started
+       networks:
+         - name: app-network
+       ports:
+         - "80:80"
+     vars:
+       ansible_python_interpreter: /opt/docker_venv/bin/python3
