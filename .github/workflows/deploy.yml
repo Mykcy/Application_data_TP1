@@ -1,7 +1,7 @@
 name: Deploy with Ansible
 
 on:
-  push:
+  push: 
     branches:
       - main
 
